@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodness | CBN Governor</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            orange: '#F58220',
+                            choco: '#3C2415',
+                            offwhite: '#F9F9F9',
+                            teal: '#66C2C2',
+                            gold: '#D4AF37',
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px -10px rgba(245, 130, 32, 0.6)',
+                        'glow-teal': '0 0 30px -10px rgba(102, 194, 194, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Utilities */
+        body {
+            background-color: #F9F9F9;
+            color: #3C2415;
+            overflow-x: hidden;
+        }
+        
+        /* Hide scrollbar for a cleaner cinematic look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F9F9F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3C2415;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F58220;
+        }
+
+        /* Image Placeholder Cutout Style */
+        .candidate-cutout {
+            background: linear-gradient(to top, #3C2415, #5A3A25);
+            mask-image: radial-gradient(ellipse at bottom, black 60%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse at bottom, black 60%, transparent 100%);
+            border-top-left-radius: 50%;
+            border-top-right-radius: 50%;
+            box-shadow: inset 0 20px 50px rgba(245, 130, 32, 0.2);
+        }
+
+        .glass-header {
+            background: rgba(60, 36, 21, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Feed container scroll */
+        .feed-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #F58220 #3C2415;
+        }
+        .feed-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .feed-scroll::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .feed-scroll::-webkit-scrollbar-thumb {
+            background: #F58220;
+            border-radius: 4px;
+        }
+
+        /* Toast Animation */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-enter {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-orange selection:text-white relative">
+
+    <!-- Canvas Background (Particles) -->
+    <canvas id="particle-canvas" class="fixed inset-0 z-0 pointer-events-none opacity-40"></canvas>
+
+    <!-- Cinematic Entrance Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-brand-choco flex flex-col items-center justify-center text-brand-offwhite p-6">
+        <div class="relative w-40 h-40 mb-8 flex items-center justify-center glow-container">
+            <div class="absolute inset-0 rounded-full bg-brand-orange/20 animate-pulse blur-xl"></div>
+            <div class="relative w-32 h-32 rounded-full border-2 border-brand-orange flex items-center justify-center bg-brand-choco shadow-glow z-10">
+                <i data-lucide="user" class="w-16 h-16 text-brand-orange"></i>
+            </div>
+        </div>
+        <p class="text-xl md:text-3xl font-light max-w-2xl text-center leading-relaxed opacity-0" id="preloader-text">
+            "Good day, my name is <strong class="font-bold text-brand-orange">Goodness</strong>, your CBN Governor; I’ll be happy to read your thoughts."
+        </p>
+    </div>
+
+    <!-- Sticky Header -->
+    <header class="glass-header sticky top-0 z-50 border-b border-brand-orange/20 transition-transform duration-300" id="header">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="text-2xl font-black text-brand-offwhite tracking-tighter uppercase flex items-center gap-2">
+                <span class="text-brand-orange">#</span>Goodness
+            </a>
+            <nav class="hidden md:flex gap-8 font-bold text-sm uppercase tracking-wider text-brand-offwhite/80">
+                <a href="#complaints" class="hover:text-brand-orange transition-colors">Complaints</a>
+                <a href="#suggestions" class="hover:text-brand-orange transition-colors">Suggestions</a>
+                <a href="#top-issues" class="hover:text-brand-gold transition-colors">Top Issues</a>
+            </nav>
+            <a href="#complaints" class="md:hidden bg-brand-orange text-brand-choco px-5 py-2 rounded-full font-bold text-sm shadow-glow">
+                Speak Up
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-brand-choco text-brand-offwhite pt-10 overflow-hidden z-10 h-[85vh] min-h-[600px] flex flex-col justify-end">
+        <!-- Oversized background text -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+            <h1 class="text-[20vw] font-black text-brand-offwhite opacity-[0.03] whitespace-nowrap leading-none select-none">
+                GOODNESS
+            </h1>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto w-full px-4 md:px-8 flex flex-col items-center text-center pb-32">
+            <span class="text-brand-teal font-bold uppercase tracking-[0.3em] mb-4 block gsap-hero">The Bridge Between Us</span>
+            <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-2 leading-none gsap-hero">
+                Goodness <br/>
+                <span class="text-brand-orange">For You.</span>
+            </h2>
+            <p class="text-lg md:text-2xl font-medium text-brand-offwhite/80 max-w-2xl mt-4 gsap-hero">
+                Your designated CBN Governor. Speaking up is the first step to progress.
+            </p>
+        </div>
+
+        <!-- Candidate Image Placeholder (Cutout) -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] max-w-[500px] h-[50vh] candidate-cutout flex items-end justify-center z-20 pb-10 gsap-hero-img">
+            <div class="text-brand-offwhite/20 flex flex-col items-center">
+                <i data-lucide="user-square-2" class="w-32 h-32 mb-4 opacity-50"></i>
+                <span class="text-sm font-bold uppercase tracking-widest opacity-50">Candidate Identity</span>
+            </div>
+        </div>
+
+        <!-- Base Gradient Overlays -->
+        <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-brand-orange/40 to-transparent z-30 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-brand-offwhite to-transparent z-30 pointer-events-none"></div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="relative z-20">
+
+        <!-- Top Issues Board -->
+        <section id="top-issues" class="py-24 bg-brand-choco text-brand-offwhite relative overflow-hidden">
+            <!-- Decorative gradient -->
+            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-50"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+                <div class="text-center mb-16 gsap-reveal">
+                    <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight flex items-center justify-center gap-4">
+                        <i data-lucide="flame" class="text-brand-orange w-10 h-10"></i>
+                        Top Issues
+                        <i data-lucide="flame" class="text-brand-orange w-10 h-10"></i>
+                    </h2>
+                    <p class="text-brand-offwhite/70 mt-4 text-lg">The voices that echo the loudest.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                    <!-- Top Complaints -->
+                    <div class="bg-brand-offwhite/5 rounded-3xl p-6 md:p-8 border border-brand-orange/20 shadow-glow gsap-reveal">
+                        <h3 class="text-2xl font-bold text-brand-orange uppercase flex items-center gap-3 mb-8 pb-4 border-b border-brand-orange/20">
+                            <i data-lucide="alert-triangle"></i> Pressing Complaints
+                        </h3>
+                        <div id="top-complaints-container" class="space-y-4">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Top Suggestions -->
+                    <div class="bg-brand-offwhite/5 rounded-3xl p-6 md:p-8 border border-brand-teal/20 shadow-glow-teal gsap-reveal">
+                        <h3 class="text-2xl font-bold text-brand-teal uppercase flex items-center gap-3 mb-8 pb-4 border-b border-brand-teal/20">
+                            <i data-lucide="lightbulb"></i> Bright Suggestions
+                        </h3>
+                        <div id="top-suggestions-container" class="space-y-4">
+                            <!-- Rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Gradient -->
+            <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-brand-offwhite to-transparent z-30 pointer-events-none"></div>
+        </section>
+
+        <!-- Forms & Feeds Section -->
+        <div class="bg-brand-offwhite py-20 pb-32">
+            <div class="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Complaints Section -->
+                <section id="complaints" class="gsap-reveal">
+                    <div class="bg-brand-choco rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden flex flex-col h-[800px]">
+                        <!-- Title -->
+                        <div class="mb-8 relative z-10">
+                            <h2 class="text-3xl md:text-4xl font-black text-brand-offwhite uppercase tracking-tight">Lodge a Complaint</h2>
+                            <p class="text-brand-orange font-medium mt-2">What needs fixing immediately?</p>
+                        </div>
+
+                        <!-- Input -->
+                        <div class="relative z-10 mb-8">
+                            <textarea id="complaint-input" rows="3" placeholder="Type your complaint here..." class="w-full bg-brand-offwhite/10 text-brand-offwhite placeholder-brand-offwhite/40 border border-brand-offwhite/20 rounded-2xl p-4 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all resize-none font-medium"></textarea>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-xs text-brand-offwhite/50">*Limit: 1 submission / 6 hours</span>
+                                <button onclick="submitPost('complaint')" class="bg-brand-orange hover:bg-[#e0751a] text-brand-choco font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-glow">
+                                    <i data-lucide="send" class="w-4 h-4"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Feed Header -->
+                        <div class="flex items-center justify-between border-b border-brand-offwhite/10 pb-4 mb-4 relative z-10">
+                            <h3 class="text-xl font-bold text-brand-offwhite">Recent Voices</h3>
+                            <div class="flex gap-2 bg-brand-offwhite/10 p-1 rounded-lg">
+                                <button onclick="changeSort('complaint', 'latest')" id="tab-complaint-latest" class="px-4 py-1.5 rounded-md text-sm font-bold bg-brand-orange text-brand-choco transition-colors">Latest</button>
+                                <button onclick="changeSort('complaint', 'top')" id="tab-complaint-top" class="px-4 py-1.5 rounded-md text-sm font-bold text-brand-offwhite hover:text-brand-orange transition-colors">Top</button>
+                            </div>
+                        </div>
+
+                        <!-- Feed -->
+                        <div id="complaints-feed" class="flex-1 overflow-y-auto feed-scroll pr-2 space-y-4 relative z-10 pb-4">
+                            <!-- Rendered via JS -->
+                        </div>
+                        
+                        <!-- BG Decoration -->
+                        <i data-lucide="alert-circle" class="absolute -bottom-10 -right-10 w-64 h-64 text-brand-offwhite opacity-[0.02] pointer-events-none"></i>
+                    </div>
+                </section>
+
+                <!-- Suggestions Section -->
+                <section id="suggestions" class="gsap-reveal">
+                    <div class="bg-brand-choco rounded-[2.5rem] p-6 md:p-10 shadow-2xl relative overflow-hidden flex flex-col h-[800px]">
+                        <!-- Title -->
+                        <div class="mb-8 relative z-10">
+                            <h2 class="text-3xl md:text-4xl font-black text-brand-offwhite uppercase tracking-tight">Drop a Suggestion</h2>
+                            <p class="text-brand-teal font-medium mt-2">How can we make things better?</p>
+                        </div>
+
+                        <!-- Input -->
+                        <div class="relative z-10 mb-8">
+                            <textarea id="suggestion-input" rows="3" placeholder="Share your brilliant idea..." class="w-full bg-brand-offwhite/10 text-brand-offwhite placeholder-brand-offwhite/40 border border-brand-offwhite/20 rounded-2xl p-4 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all resize-none font-medium"></textarea>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-xs text-brand-offwhite/50">*Limit: 1 submission / 6 hours</span>
+                                <button onclick="submitPost('suggestion')" class="bg-brand-teal hover:bg-[#5bb0b0] text-brand-choco font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-glow-teal">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i> Suggest
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Feed Header -->
+                        <div class="flex items-center justify-between border-b border-brand-offwhite/10 pb-4 mb-4 relative z-10">
+                            <h3 class="text-xl font-bold text-brand-offwhite">Recent Ideas</h3>
+                            <div class="flex gap-2 bg-brand-offwhite/10 p-1 rounded-lg">
+                                <button onclick="changeSort('suggestion', 'latest')" id="tab-suggestion-latest" class="px-4 py-1.5 rounded-md text-sm font-bold bg-brand-teal text-brand-choco transition-colors">Latest</button>
+                                <button onclick="changeSort('suggestion', 'top')" id="tab-suggestion-top" class="px-4 py-1.5 rounded-md text-sm font-bold text-brand-offwhite hover:text-brand-teal transition-colors">Top</button>
+                            </div>
+                        </div>
+
+                        <!-- Feed -->
+                        <div id="suggestions-feed" class="flex-1 overflow-y-auto feed-scroll pr-2 space-y-4 relative z-10 pb-4">
+                            <!-- Rendered via JS -->
+                        </div>
+
+                        <!-- BG Decoration -->
+                        <i data-lucide="lightbulb" class="absolute -bottom-10 -right-10 w-64 h-64 text-brand-offwhite opacity-[0.02] pointer-events-none"></i>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-choco text-brand-offwhite py-12 border-t-4 border-brand-orange relative z-20">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 text-center flex flex-col items-center">
+            <a href="#" class="text-3xl font-black tracking-tighter uppercase mb-6 flex items-center gap-2">
+                <span class="text-brand-orange">#</span>Goodness<span class="text-brand-teal">2026</span>
+            </a>
+            <p class="text-brand-offwhite/60 font-medium text-lg mb-8 max-w-md">
+                Built for CBN students. Your voice matters, and we are listening.
+            </p>
+            <div class="flex gap-6 mb-8">
+                <div class="w-12 h-12 rounded-full border border-brand-offwhite/20 flex items-center justify-center hover:bg-brand-orange hover:text-brand-choco hover:border-brand-orange cursor-pointer transition-all">
+                    <i data-lucide="twitter"></i>
+                </div>
+                <div class="w-12 h-12 rounded-full border border-brand-offwhite/20 flex items-center justify-center hover:bg-brand-orange hover:text-brand-choco hover:border-brand-orange cursor-pointer transition-all">
+                    <i data-lucide="instagram"></i>
+                </div>
+                <div class="w-12 h-12 rounded-full border border-brand-offwhite/20 flex items-center justify-center hover:bg-brand-orange hover:text-brand-choco hover:border-brand-orange cursor-pointer transition-all">
+                    <i data-lucide="mail"></i>
+                </div>
+            </div>
+            <p class="text-sm text-brand-offwhite/40 uppercase tracking-widest font-bold">
+                &copy; <span id="year"></span> Goodness Campaign. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // --- Data & State Management ---
+        const MOCK_DATA = {
+            complaints: [
+                { id: 'c1', text: "The library wifi has been unstable for the past 3 weeks. It's affecting our research and assignments.", timestamp: Date.now() - 86400000, upvotes: 45 },
+                { id: 'c2', text: "Shuttle buses are too few during evening rush hours. Students wait up to an hour.", timestamp: Date.now() - 40000000, upvotes: 82 },
+                { id: 'c3', text: "Cafeteria prices increased again without any prior notice.", timestamp: Date.now() - 10000000, upvotes: 12 }
+            ],
+            suggestions: [
+                { id: 's1', text: "Let's organize a town hall meeting once a month to directly discuss issues with the executive council.", timestamp: Date.now() - 172800000, upvotes: 105 },
+                { id: 's2', text: "Implement a digital clearance system to reduce the massive queues during exam periods.", timestamp: Date.now() - 20000000, upvotes: 67 },
+                { id: 's3', text: "Create quiet study zones with enforcing monitors during exam week.", timestamp: Date.now() - 5000000, upvotes: 24 }
+            ]
+        };
+
+        // Load data from LocalStorage or use Mock Data
+        let appData = JSON.parse(localStorage.getItem('goodness_data'));
+        if (!appData) {
+            appData = MOCK_DATA;
+            localStorage.setItem('goodness_data', JSON.stringify(appData));
+        }
+
+        let userVotes = JSON.parse(localStorage.getItem('goodness_votes')) || { complaints: [], suggestions: [] };
+        
+        // Sorting State
+        let currentSort = {
+            complaint: 'latest',
+            suggestion: 'latest'
+        };
+
+        // Save Helpers
+        const saveData = () => localStorage.setItem('goodness_data', JSON.stringify(appData));
+        const saveVotes = () => localStorage.setItem('goodness_votes', JSON.stringify(userVotes));
+
+        // Time Formatter
+        const timeAgo = (timestamp) => {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " mins ago";
+            return "Just now";
+        };
+
+        // --- Render Functions ---
+        
+        function renderCard(item, type, isTopBoard = false) {
+            const isVoted = type === 'complaint' 
+                ? userVotes.complaints.includes(item.id) 
+                : userVotes.suggestions.includes(item.id);
+            
+            const accentClass = type === 'complaint' ? 'text-brand-orange' : 'text-brand-teal';
+            const bgHover = type === 'complaint' ? 'hover:bg-brand-orange/10' : 'hover:bg-brand-teal/10';
+            const voteIconFilledClass = isVoted ? `${accentClass} fill-current` : 'text-brand-offwhite/50';
+            
+            const cardBg = isTopBoard ? 'bg-brand-choco' : 'bg-brand-offwhite';
+            const textColor = isTopBoard ? 'text-brand-offwhite' : 'text-brand-choco';
+            const subTextColor = isTopBoard ? 'text-brand-offwhite/50' : 'text-brand-choco/60';
+            const borderClass = isTopBoard ? 'border-brand-offwhite/10' : 'border-brand-choco/10';
+
+            return `
+                <div class="${cardBg} rounded-2xl p-5 border ${borderClass} shadow-sm flex gap-4 transition-transform hover:-translate-y-1">
+                    <div class="flex flex-col items-center gap-1">
+                        <button onclick="toggleVote('${type}', '${item.id}')" 
+                            class="w-10 h-10 rounded-full flex items-center justify-center ${bgHover} transition-colors group">
+                            <i data-lucide="chevron-up" class="w-6 h-6 ${voteIconFilledClass} transition-colors group-hover:${accentClass}"></i>
+                        </button>
+                        <span class="font-bold text-lg ${textColor}">${item.upvotes}</span>
+                    </div>
+                    <div class="flex-1 pt-1">
+                        <p class="${textColor} font-medium leading-relaxed">${escapeHTML(item.text)}</p>
+                        <span class="text-xs ${subTextColor} font-bold tracking-wider uppercase mt-3 block">
+                            ${timeAgo(item.timestamp)}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFeeds() {
+            ['complaint', 'suggestion'].forEach(type => {
+                const container = document.getElementById(`${type}s-feed`);
+                const items = [...appData[`${type}s`]];
+                
+                // Sort
+                if (currentSort[type] === 'latest') {
+                    items.sort((a, b) => b.timestamp - a.timestamp);
+                } else {
+                    items.sort((a, b) => b.upvotes - a.upvotes);
+                }
+
+                if (items.length === 0) {
+                    container.innerHTML = `<p class="text-brand-offwhite/50 text-center py-10 font-medium">No ${type}s yet. Be the first!</p>`;
+                } else {
+                    container.innerHTML = items.map(item => renderCard(item, type, false)).join('');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function renderTopIssues() {
+            ['complaint', 'suggestion'].forEach(type => {
+                const container = document.getElementById(`top-${type}s-container`);
+                const items = [...appData[`${type}s`]]
+                                .sort((a, b) => b.upvotes - a.upvotes)
+                                .slice(0, 3); // Top 3
+
+                if (items.length === 0) {
+                    container.innerHTML = `<p class="text-brand-offwhite/50 font-medium italic">No data available.</p>`;
+                } else {
+                    container.innerHTML = items.map(item => renderCard(item, type, true)).join('');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function updateAll() {
+            renderFeeds();
+            renderTopIssues();
+        }
+
+        // --- Interactions ---
+
+        function changeSort(type, sortMethod) {
+            currentSort[type] = sortMethod;
+            
+            // Update UI tabs
+            const latestBtn = document.getElementById(`tab-${type}-latest`);
+            const topBtn = document.getElementById(`tab-${type}-top`);
+            
+            const activeBg = type === 'complaint' ? 'bg-brand-orange text-brand-choco' : 'bg-brand-teal text-brand-choco';
+            const inactiveClass = `text-brand-offwhite hover:text-brand-${type === 'complaint' ? 'orange' : 'teal'}`;
+
+            if (sortMethod === 'latest') {
+                latestBtn.className = `px-4 py-1.5 rounded-md text-sm font-bold transition-colors ${activeBg}`;
+                topBtn.className = `px-4 py-1.5 rounded-md text-sm font-bold transition-colors bg-transparent ${inactiveClass}`;
+            } else {
+                topBtn.className = `px-4 py-1.5 rounded-md text-sm font-bold transition-colors ${activeBg}`;
+                latestBtn.className = `px-4 py-1.5 rounded-md text-sm font-bold transition-colors bg-transparent ${inactiveClass}`;
+            }
+
+            renderFeeds();
+        }
+
+        function toggleVote(type, id) {
+            const list = appData[`${type}s`];
+            const item = list.find(i => i.id === id);
+            if (!item) return;
+
+            const voteArray = type === 'complaint' ? userVotes.complaints : userVotes.suggestions;
+            const index = voteArray.indexOf(id);
+
+            if (index > -1) {
+                // Remove vote
+                voteArray.splice(index, 1);
+                item.upvotes = Math.max(0, item.upvotes - 1);
+            } else {
+                // Add vote
+                voteArray.push(id);
+                item.upvotes++;
+            }
+
+            saveVotes();
+            saveData();
+            updateAll();
+        }
+
+        function submitPost(type) {
+            const inputEl = document.getElementById(`${type}-input`);
+            const text = inputEl.value.trim();
+            
+            if (!text) {
+                showToast("Please enter a message before submitting.", "error");
+                return;
+            }
+
+            const now = Date.now();
+            const lastSub = localStorage.getItem('goodness_last_sub') || 0;
+            const sixHours = 6 * 60 * 60 * 1000;
+
+            if (now - lastSub < sixHours) {
+                const hoursLeft = Math.ceil((sixHours - (now - lastSub)) / (60 * 60 * 1000));
+                showToast(`Limit reached. Please wait ${hoursLeft} hour(s) before submitting again.`, "error");
+                return;
+            }
+
+            const newPost = {
+                id: type.charAt(0) + Date.now().toString(),
+                text: text,
+                timestamp: now,
+                upvotes: 0
+            };
+
+            appData[`${type}s`].push(newPost);
+            
+            // Automatically upvote own post
+            toggleVote(type, newPost.id); 
+
+            localStorage.setItem('goodness_last_sub', now);
+            saveData();
+            
+            inputEl.value = '';
+            changeSort(type, 'latest'); // Force show latest
+            updateAll();
+            
+            showToast(`Your ${type} has been submitted successfully!`, "success");
+        }
+
+        // --- Utilities ---
+        
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-brand-choco' : 'bg-red-600';
+            const borderColor = type === 'success' ? 'border-brand-teal' : 'border-red-400';
+            const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+            const textColor = type === 'success' ? 'text-brand-teal' : 'text-white';
+
+            toast.className = `toast-enter ${bgColor} text-white border-l-4 ${borderColor} px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm pointer-events-auto`;
+            toast.innerHTML = `
+                <i data-lucide="${icon}" class="${textColor} w-6 h-6 shrink-0"></i>
+                <p class="font-medium text-sm">${message}</p>
+            `;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease-in';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // --- Animations & Setup ---
+
+        // Setup Canvas Particles
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedY = Math.random() * 0.5 + 0.1;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.y -= this.speedY;
+                    this.x += this.speedX;
+                    if (this.y < 0) {
+                        this.y = canvas.height;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(245, 130, 32, ${this.opacity})`; // brand-orange
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+
+        // Run Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            updateAll();
+
+            // GSAP Animations
+            gsap.registerPlugin(ScrollTrigger);
+
+            const tl = gsap.timeline();
+
+            // Preloader cinematic fade
+            tl.to("#preloader-text", { opacity: 1, y: -10, duration: 1, ease: "power2.out", delay: 0.5 })
+              .to("#preloader", { opacity: 0, duration: 1, ease: "power2.inOut", delay: 1.5 })
+              .set("#preloader", { display: "none" })
+              // Hero entrance
+              .from(".gsap-hero", { y: 50, opacity: 0, duration: 0.8, stagger: 0.1, ease: "back.out(1.7)" }, "-=0.2")
+              .from(".gsap-hero-img", { y: 100, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.6");
+
+            // Scroll Reveals
+            gsap.utils.toArray('.gsap-reveal').forEach(elem => {
+                gsap.from(elem, {
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            });
+
+            // Sticky Header Glass effect on scroll
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 50) {
+                    header.classList.add('shadow-md');
+                } else {
+                    header.classList.remove('shadow-md');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
+
+```
