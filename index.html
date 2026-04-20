@@ -332,6 +332,8 @@
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -340,6 +342,16 @@
     
     <script>
         // Initialize Icons
+        // --- Supabase Connection ---
+// --- Supabase Connection ---
+const supabaseUrl = 'https://nptaiqsddfwrgfblnshf.supabase.co'; 
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wdGFpcXNkZGZ3cmdmYmxuc2hmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1OTIyNDIsImV4cCI6MjA5MjE2ODI0Mn0.rsOfQaas7UYXsFNpYn1VcJicUArHymU6MfepHuRP5PQ';
+const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+
+// This helps you verify it's working in the browser console
+console.log("Supabase initialized!");
+
         lucide.createIcons();
         document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -515,7 +527,7 @@
             updateAll();
         }
 
-        function submitPost(type) {
+               async function submitPost(type) {
             const inputEl = document.getElementById(`${type}-input`);
             const text = inputEl.value.trim();
             
@@ -530,31 +542,29 @@
 
             if (now - lastSub < sixHours) {
                 const hoursLeft = Math.ceil((sixHours - (now - lastSub)) / (60 * 60 * 1000));
-                showToast(`Limit reached. Please wait ${hoursLeft} hour(s) before submitting again.`, "error");
+                showToast(`Limit reached. Please wait ${hoursLeft} hour(s).`, "error");
                 return;
             }
 
-            const newPost = {
-                id: type.charAt(0) + Date.now().toString(),
-                text: text,
-                timestamp: now,
-                upvotes: 0
-            };
+            // This sends the data to your 'complaints' or 'suggestions' table
+            const { data, error } = await _supabase
+                .from(`${type}s`) 
+                .insert([{ message: text, upvotes: 0 }]);
 
-            appData[`${type}s`].push(newPost);
-            
-            // Automatically upvote own post
-            toggleVote(type, newPost.id); 
+            if (error) {
+                console.error("Supabase Error:", error.message);
+                showToast("Error saving to cloud.", "error");
+            } else {
+                localStorage.setItem('goodness_last_sub', now);
+                showToast(`Your ${type} has been submitted!`, "success");
+                inputEl.value = '';
+                // Since updateAll() relies on MOCK_DATA right now, 
+                // we'll just show the toast for now.
+                updateAll(); 
+            }
+        } 
+ 
 
-            localStorage.setItem('goodness_last_sub', now);
-            saveData();
-            
-            inputEl.value = '';
-            changeSort(type, 'latest'); // Force show latest
-            updateAll();
-            
-            showToast(`Your ${type} has been submitted successfully!`, "success");
-        }
 
         // --- Utilities ---
         
@@ -692,6 +702,35 @@
                 }
             });
         });
+async function fetchPosts() {
+    const { data: complaints, error: cError } = await _supabase
+        .from('complaints')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    const { data: suggestions, error: sError } = await _supabase
+        .from('suggestions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (!cError && !sError) {
+        appData.complaints = complaints.map(item => ({
+            id: item.id,
+            text: item.message, // Ensure this matches your 'message' column
+            upvotes: item.upvotes || 0,
+            timestamp: new Date(item.created_at).getTime()
+        }));
+
+        appData.suggestions = suggestions.map(item => ({
+            id: item.id,
+            text: item.message,
+            upvotes: item.upvotes || 0,
+            timestamp: new Date(item.created_at).getTime()
+        }));
+
+        updateAll(); 
+    }
+}
 
     </script>
 </body>
