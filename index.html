@@ -113,9 +113,16 @@
     <div id="preloader" class="fixed inset-0 z-[100] bg-brand-choco flex flex-col items-center justify-center text-brand-offwhite p-6">
         <div class="relative w-40 h-40 mb-8 flex items-center justify-center glow-container">
             <div class="absolute inset-0 rounded-full bg-brand-orange/20 animate-pulse blur-xl"></div>
-            <div class="relative w-32 h-32 rounded-full border-2 border-brand-orange flex items-center justify-center bg-brand-choco shadow-glow z-10">
-                <i data-lucide="user" class="w-16 h-16 text-brand-orange"></i>
-            </div>
+  <div class="relative w-32 h-32 z-10">
+    <!-- Circle border + body clipped inside -->
+    <div class="absolute inset-0 rounded-full border-2 border-brand-orange shadow-glow overflow-hidden">
+        <img src="CBNSVSASSET/goodness.jpg" class="w-full h-full object-cover object-top scale-150" />
+    </div>
+    <!-- Head popping out above the circle (no clip from circle) -->
+    <img src="CBNSVSASSET/goodness.jpg" 
+         class="absolute inset-0 w-full h-full object-cover object-top scale-150 z-20" 
+         style="clip-path: inset(0 5% 70% 5%)" />
+</div>
         </div>
         <p class="text-xl md:text-3xl font-light max-w-2xl text-center leading-relaxed opacity-0" id="preloader-text">
             "Good day, my name is <strong class="font-bold text-brand-orange">Goodness</strong>, your CBN Governor; I’ll be happy to read your thoughts."
@@ -161,10 +168,15 @@
 
         <!-- Candidate Image Placeholder (Cutout) -->
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] max-w-[500px] h-[50vh] candidate-cutout flex items-end justify-center z-20 pb-10 gsap-hero-img">
-            <div class="text-brand-offwhite/20 flex flex-col items-center">
-                <i data-lucide="user-square-2" class="w-32 h-32 mb-4 opacity-50"></i>
-                <span class="text-sm font-bold uppercase tracking-widest opacity-50">Candidate Identity</span>
-            </div>
+      <div class="relative w-full h-full">
+    <!-- Body clipped inside cutout shape -->
+    <img src="CBNSVSASSET/goodness.jpg" 
+         class="absolute inset-0 w-full h-full object-cover object-top scale-110" />
+    <!-- Head popping above the cutout -->
+    <img src="CBNSVSASSET/goodness.jpg" 
+         class="absolute inset-0 w-full h-full object-cover object-top scale-110 z-30" 
+         style="clip-path: inset(0 10% 75% 10%)" />
+</div>
         </div>
 
         <!-- Base Gradient Overlays -->
@@ -560,7 +572,7 @@ console.log("Supabase initialized!");
                 inputEl.value = '';
                 // Since updateAll() relies on MOCK_DATA right now, 
                 // we'll just show the toast for now.
-                updateAll(); 
+                fetchPosts(); 
             }
         } 
  
@@ -662,7 +674,7 @@ console.log("Supabase initialized!");
         // Run Initialization
         window.addEventListener('DOMContentLoaded', () => {
             initParticles();
-            updateAll();
+            fetchPosts();
 
             // GSAP Animations
             gsap.registerPlugin(ScrollTrigger);
